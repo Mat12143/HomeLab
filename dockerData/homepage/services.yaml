@@ -1,0 +1,34 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/latest/configs/services
+
+- Network Tools:
+    - Pihole:
+        href: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_PIHOLE_PORT}}/admin
+        icon: pi-hole
+        container: pihole
+        widget:
+          type: pihole
+          url: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_PIHOLE_PORT}}
+          key: {{HOMEPAGE_VAR_PIHOLE_API}}
+    - Tailscale:
+        icon: tailscale
+        href: https://login.tailscale.com/admin/machines
+        widget:
+          type: tailscale
+          deviceid: {{HOMEPAGE_VAR_TAILSCALE_DEVICEID}}
+          key: {{HOMEPAGE_VAR_TAILSCALE_API}}
+    - Router:
+        icon: router
+        href: http://192.168.1.1
+
+- Monitoring:
+    - UptimeKuma:
+        href: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_UPTIMEKUMA_PORT}}
+        icon: uptime-kuma
+        container: uptimekuma
+        widget:
+          type: uptimekuma
+          url: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_UPTIMEKUMA_PORT}}
+          slug: {{HOMEPAGE_VAR_UPTIMEKUMA_SLUG}}
+        

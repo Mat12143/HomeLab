@@ -1,0 +1,42 @@
+services:
+  # Pihole ad blocking service
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    network_mode: host
+    env_file:
+      - path: ./.env
+    environment:
+      WEB_PORT: ${HOMEPAGE_VAR_PIHOLE_PORT}
+    volumes:
+      - ./pihole/config:/etc/pihole
+      - ./pihole/dnsmasq:/etc/dnsmasq.d
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+
+  # Homepage for the lab
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    env_file:
+      - path: ./.env
+    ports:
+      - 80:3000
+    volumes:
+      - ./homepage/:/app/config 
+      - /var/run/docker.sock:/var/run/docker.sock:ro 
+      # The disk for backup for DietPI
+      - /mnt/backup:/backup
+    restart: unless-stopped  
+
+  uptimekuma:
+    image: louislam/uptime-kuma
+    container_name: uptimekuma
+    env_file:
+      - path: ./.env
+    restart: unless-stopped
+    ports:
+      - ${HOMEPAGE_VAR_UPTIMEKUMA_PORT}:3001
+    volumes:
+      - ./uptimekuma/:/app/data

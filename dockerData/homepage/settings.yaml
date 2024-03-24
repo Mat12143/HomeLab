@@ -1,0 +1,26 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/latest/configs/settings
+
+title: Homy
+theme: dark
+color: zinc
+
+headerStyle: boxed
+
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: true
+  showSearchSuggestions: true
+  hideVisitURL: true
+
+layout:
+  Network Tools:
+    icon: mdi-web
+    style: row
+    columns: 2
+
+  Monitoring:
+    icon: mdi-chart-line
+    style: row
+    columns: 2
