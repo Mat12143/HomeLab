@@ -9,8 +9,8 @@ services:
     environment:
       WEB_PORT: ${HOMEPAGE_VAR_PIHOLE_PORT}
     volumes:
-      - ./pihole/config:/etc/pihole
-      - ./pihole/dnsmasq:/etc/dnsmasq.d
+      - ./dockerData/pihole/config:/etc/pihole
+      - ./dockerData/pihole/dnsmasq:/etc/dnsmasq.d
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
@@ -24,7 +24,7 @@ services:
     ports:
       - 80:3000
     volumes:
-      - ./homepage/:/app/config 
+      - ./dockerData/homepage/:/app/config 
       - /var/run/docker.sock:/var/run/docker.sock:ro 
       # The disk for backup for DietPI
       - /mnt/backup:/backup
@@ -39,4 +39,4 @@ services:
     ports:
       - ${HOMEPAGE_VAR_UPTIMEKUMA_PORT}:3001
     volumes:
-      - ./uptimekuma/:/app/data
+      - ./dockerData/uptimekuma/:/app/data
