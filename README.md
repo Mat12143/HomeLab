@@ -23,14 +23,14 @@ I am currently running a few Docker Containers. All the configurations are in th
 ## [Homepage](https://github.com/gethomepage/homepage)
 A simple and minimal homepage with some information about the hardware status and containers health, with some cool services stats
 
-![https://github.com/Mat12143/HomeLab/blob/main/docs/img/homepage.png]()
+![](https://github.com/Mat12143/HomeLab/blob/main/docs/img/homepage.png)
 ## [PiHole](https://github.com/pi-hole/docker-pi-hole)
 Network-wide AD Blocking services through DNS
 
-![https://github.com/Mat12143/HomeLab/blob/main/docs/img/pihole.png]()
+![](https://github.com/Mat12143/HomeLab/blob/main/docs/img/pihole.png)
 ## [UptimeKuma](https://github.com/louislam/uptime-kuma)
 Self hosted alternative to UptimeRobot, to monitor my Virtual Private Servers and other services
 
-![https://github.com/Mat12143/HomeLab/blob/main/docs/img/uptimekuma.png]()
+![](https://github.com/Mat12143/HomeLab/blob/main/docs/img/uptimekuma.png)
 ## [TailScale](https://tailscale.com)
 I use Tailscale ZeroTier VPN to remote into my server from outside the network
