@@ -31,6 +31,6 @@ Network-wide AD Blocking services through DNS
 ## [UptimeKuma](https://github.com/louislam/uptime-kuma)
 Self hosted alternative to UptimeRobot, to monitor my Virtual Private Servers and other services
 
-![](https://github.com/Mat12143/HomeLab/blob/main/docs/img/uptimekuma.png)
+![](https://github.com/Mat12143/HomeLab/blob/main/docs/img/uptimeKuma.png)
 ## [TailScale](https://tailscale.com)
 I use Tailscale ZeroTier VPN to remote into my server from outside the network
