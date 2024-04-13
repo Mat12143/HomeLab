@@ -20,6 +20,6 @@
           key: {{HOMEPAGE_VAR_TAILSCALE_API}}
 
     - BackRest:
-        icon: backup
+        icon: restic
         href: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_BACKREST_PORT}}
         container: backrest
