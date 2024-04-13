@@ -10,14 +10,14 @@
         widget:
           type: pihole
           url: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_PIHOLE_PORT}}
-          key: { { HOMEPAGE_VAR_PIHOLE_API } }
+          key: {{HOMEPAGE_VAR_PIHOLE_API}}
     - Tailscale:
         icon: tailscale
         href: https://login.tailscale.com/admin/machines
         widget:
           type: tailscale
-          deviceid: { { HOMEPAGE_VAR_TAILSCALE_DEVICEID } }
-          key: { { HOMEPAGE_VAR_TAILSCALE_API } }
+          deviceid: {{HOMEPAGE_VAR_TAILSCALE_DEVICEID}}
+          key: {{HOMEPAGE_VAR_TAILSCALE_API}}
 
     - BackRest:
         icon: backup
