@@ -24,19 +24,28 @@ services:
     ports:
       - 80:3000
     volumes:
-      - ./dockerData/homepage/:/app/config 
-      - /var/run/docker.sock:/var/run/docker.sock:ro 
+      - ./dockerData/homepage/:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       # The disk for backup for DietPI
       - /mnt/backup:/backup
-    restart: unless-stopped  
+    restart: unless-stopped
 
-  uptimekuma:
-    image: louislam/uptime-kuma
-    container_name: uptimekuma
+  backrest:
+    image: garethgeorge/backrest
+    container_name: backrest
     env_file:
       - path: ./.env
-    restart: unless-stopped
     ports:
-      - ${HOMEPAGE_VAR_UPTIMEKUMA_PORT}:3001
+      - 9898:9898
     volumes:
-      - ./dockerData/uptimekuma/:/app/data
+      - ./dockerData/backrest/data:/data
+      - ./dockerData/backrest/config:/config
+      - ./dockerData/backrest/cache:/cache
+      - /mnt/backup:/repo
+      - ./dockerData:/toBackup
+    environment:
+      - BACKREST_DATA=/data # path for backrest data. restic binary and the database are placed here.
+      - BACKREST_CONFIG=/config/config.json # path for the backrest config file.
+      - XDG_CACHE_HOME=/cache # path for the restic cache which greatly improves performance.
+      - BACKREST_PORT=${HOMEPAGE_VAR_BACKREST_PORT}
+    restart: unless-stopped

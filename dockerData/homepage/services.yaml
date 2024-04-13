@@ -10,25 +10,16 @@
         widget:
           type: pihole
           url: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_PIHOLE_PORT}}
-          key: {{HOMEPAGE_VAR_PIHOLE_API}}
+          key: { { HOMEPAGE_VAR_PIHOLE_API } }
     - Tailscale:
         icon: tailscale
         href: https://login.tailscale.com/admin/machines
         widget:
           type: tailscale
-          deviceid: {{HOMEPAGE_VAR_TAILSCALE_DEVICEID}}
-          key: {{HOMEPAGE_VAR_TAILSCALE_API}}
-    - Router:
-        icon: router
-        href: http://192.168.1.1
+          deviceid: { { HOMEPAGE_VAR_TAILSCALE_DEVICEID } }
+          key: { { HOMEPAGE_VAR_TAILSCALE_API } }
 
-- Monitoring:
-    - UptimeKuma:
-        href: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_UPTIMEKUMA_PORT}}
-        icon: uptime-kuma
-        container: uptimekuma
-        widget:
-          type: uptimekuma
-          url: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_UPTIMEKUMA_PORT}}
-          slug: {{HOMEPAGE_VAR_UPTIMEKUMA_SLUG}}
-        
+    - BackRest:
+        icon: backup
+        href: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_BACKREST_PORT}}
+        container: backrest
