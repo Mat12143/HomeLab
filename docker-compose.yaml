@@ -43,6 +43,7 @@ services:
       - ./dockerData/backrest/cache:/cache
       - /mnt/backup:/repo
       - ./dockerData:/toBackup
+      - ./dockerData/backrest/restore:/restore
     environment:
       - BACKREST_DATA=/data # path for backrest data. restic binary and the database are placed here.
       - BACKREST_CONFIG=/config/config.json # path for the backrest config file.
