@@ -24,3 +24,8 @@ layout:
     icon: mdi-chart-line
     style: row
     columns: 2
+
+  Backup:
+    icon: mdi-cloud-upload
+    style: row
+    columns: 2

@@ -19,6 +19,7 @@
           deviceid: {{HOMEPAGE_VAR_TAILSCALE_DEVICEID}}
           key: {{HOMEPAGE_VAR_TAILSCALE_API}}
 
+- Backup:
     - BackRest:
         icon: restic
         href: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_BACKREST_PORT}}
