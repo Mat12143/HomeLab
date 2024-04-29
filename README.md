@@ -6,10 +6,10 @@ This project contains all the configuration files that make up my Homelab
 > https://linuxhandbook.com/homelab/
 # Future Plans
 - [ ] Automatic OS Install
-- [ ] Strong Backup solution
+- [x] Strong Backup solution
 - [ ] Passive Cooling for the Pi
 # Overview
-## ⚙️ Hardware
+## ⚙️ Hardwarre
 I am currently running a ```Rasberry Pi 4B (4GB Model)```
 
 I added a fan to cool the PI, but in the future I want to buy some heat pipes to get some passive cooling too
@@ -28,8 +28,9 @@ A simple and minimal homepage with some information about the hardware status an
 Network-wide AD Blocking services through DNS
 
 ![](https://github.com/Mat12143/HomeLab/blob/main/docs/img/pihole.png)
-## [UptimeKuma](https://github.com/louislam/uptime-kuma)
-Self hosted alternative to UptimeRobot, to monitor my Virtual Private Servers and other services
+
+## Backrestic
+A Web UI for the restic backup solution
 
 ![](https://github.com/Mat12143/HomeLab/blob/main/docs/img/uptimeKuma.png)
 ## [TailScale](https://tailscale.com)

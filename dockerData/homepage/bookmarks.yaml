@@ -1,3 +1,12 @@
 ---
 # For configuration options and examples, please see:
 # https://gethomepage.dev/latest/configs/bookmarks
+- Network Devices:
+  - Router:
+    - href: https://192.168.1.1
+      icon: router
+
+- External Services:
+  - NetData:
+    - href: https://app.netdata.cloud/
+      icon: netdata
