@@ -9,6 +9,8 @@ services:
     environment:
       - WEB_PORT=${HOMEPAGE_VAR_PIHOLE_PORT}
       - TZ=${TZ}
+    labels:
+     - diun.enable=true
     volumes:
       - ./dockerData/pihole/config:/etc/pihole
       - ./dockerData/pihole/dnsmasq:/etc/dnsmasq.d
@@ -24,6 +26,8 @@ services:
       - path: ./.env
     ports:
       - 80:3000
+    labels:
+     - diun.enable=true
     volumes:
       - ./dockerData/homepage/:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -46,6 +50,8 @@ services:
       - /mnt/backup:/repo
       - ./dockerData:/toBackup
       - ./dockerData/backrest/restore:/restore
+    labels:
+     - diun.enable=true
     environment:
       - BACKREST_DATA=/data # path for backrest data. restic binary and the database are placed here.
       - BACKREST_CONFIG=/config/config.json # path for the backrest config file.
@@ -67,6 +73,5 @@ services:
       - DIUN_WATCH_SCHEDULE=0 */6 * * *
       - DIUN_WATCH_JITTER=30s
       - DIUN_PROVIDERS_DOCKER=true
-      - DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT=true
       - DIUN_NOTIF_DISCORD_WEBHOOKURL=${DIUN_DISCORD_WEBHOOK}
       - DIUN_NOTIF_DISCORD_TEMPLATEBODY=Docker tag {{ if .Entry.Image.HubLink }}[**{{ .Entry.Image }}**]({{ .Entry.Image.HubLink }}){{ else }}**{{ .Entry.Image }}**{{ end }} is available on {{ .Entry.Image.Domain }} ({{ .Meta.Hostname }})
