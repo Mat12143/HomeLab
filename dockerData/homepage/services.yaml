@@ -28,5 +28,5 @@
 - Monitoring:
     - Diun:
         icon: diun 
-        href: {{HOMEPAGE_VAR_DIUN_DISCORD_CHANNEL}}
+        href: https://{{HOMEPAGE_VAR_DIUN_DISCORD_CHANNEL}}
         container: diun
