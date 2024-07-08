@@ -1,4 +1,18 @@
 services:
+
+  nginxproxymanager:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginxproxymanager
+    restart: unless-stopped 
+    ports:
+     - 80:80
+     - 81:81
+     - 443:443
+    volumes:
+     - ./dockerData/nginx/data:/data
+     - ./dockerData/nginx/letsencrypt:/etc/letsencrypt 
+
+
   # Pihole DNS AD Blocking service
   pihole:
     container_name: pihole
@@ -23,8 +37,6 @@ services:
     container_name: homepage
     env_file:
       - path: ./.env
-    ports:
-      - 80:3000
     volumes:
       - ./dockerData/homepage/:/app/config
       # Docker socket in order to view and display containers status
@@ -37,8 +49,6 @@ services:
     container_name: backrest
     env_file:
       - path: ./.env
-    ports:
-      - 9898:9898
     volumes:
       - ./dockerData/backrest/data:/data
       - ./dockerData/backrest/config:/config
@@ -50,7 +60,6 @@ services:
       - BACKREST_DATA=/data # path for backrest data. restic binary and the database are placed here.
       - BACKREST_CONFIG=/config/config.json # path for the backrest config file.
       - XDG_CACHE_HOME=/cache # path for the restic cache which greatly improves performance.
-      - BACKREST_PORT=${HOMEPAGE_VAR_BACKREST_PORT}
     restart: unless-stopped
 
   diun:
