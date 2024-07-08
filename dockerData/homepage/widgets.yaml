@@ -15,7 +15,6 @@
     label: Storage
     disk: 
       - /
-      - /backup
 
 - openweathermap:
     label: Weather 
@@ -24,6 +23,6 @@
     units: metric 
     provider: openweathermap
     apiKey: {{HOMEPAGE_VAR_WEATHER_API}}
-    cache: 5 
+    cache: 15 # Cache minutes
     format: 
       maximumFractionDigits: 1

@@ -6,16 +6,15 @@ This project contains all the configuration files that make up my Homelab
 > https://linuxhandbook.com/homelab/
 # Future Plans
 - [ ] Automatic OS Install
-- [x] Strong Backup solution
-- [ ] Passive Cooling for the Pi
+- [ ] Strong Backup solution
+- [ ] Replace the HDD with a SSD
+
 # Overview
 ## ⚙️ Hardwarre
-I am currently running a ```Rasberry Pi 4B (4GB Model)```
-
-I added a fan to cool the PI, but in the future I want to buy some heat pipes to get some passive cooling too
+I am currently running a ```Laptop with an Intel i5-8250U, 8GB of Ram, 500GB HDD```
 
 **Is it the best solution?**
-For my present use case it is more than enough computing power for what I am currently running. Power consumption, also, is very important for me, so going with a power hungry old desktop pc, was a no go, especially when I had a Rasbperry Pi 4 taking dust
+For my present use case it is more than enough computing power for what I am currently running. Power consumption, also, is very important for me, so going with a power hungry old desktop pc, was a no go, especially when I had a "Old" Laptop laying around taking dust
 ## 📦 Services
 I am currently running a few Docker Containers. All the configurations are in the [docker-compose.yml](https://github.com/Mat12143/HomeLab/blob/main/docker-compose.yaml)
 

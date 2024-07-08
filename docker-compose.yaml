@@ -1,8 +1,9 @@
 services:
-  # Pihole ad blocking service
+  # Pihole DNS AD Blocking service
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
+    # Network mode in order to use DHCP
     network_mode: host
     env_file:
       - path: ./.env
@@ -26,9 +27,8 @@ services:
       - 80:3000
     volumes:
       - ./dockerData/homepage/:/app/config
+      # Docker socket in order to view and display containers status
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      # The disk for backup for DietPI
-      - /mnt/backup:/backup
     restart: unless-stopped
 
   # Backup frontend
@@ -42,10 +42,10 @@ services:
     volumes:
       - ./dockerData/backrest/data:/data
       - ./dockerData/backrest/config:/config
+      # TODO: Add cache path to ignore on backup
       - ./dockerData/backrest/cache:/cache
-      - /mnt/backup:/repo
-      - ./dockerData:/toBackup
       - ./dockerData/backrest/restore:/restore
+      # TODO: Add mount points for backup
     environment:
       - BACKREST_DATA=/data # path for backrest data. restic binary and the database are placed here.
       - BACKREST_CONFIG=/config/config.json # path for the backrest config file.
@@ -56,8 +56,10 @@ services:
   diun:
     image: crazymax/diun:latest
     command: serve
-    hostname: homy
+    hostname: homi
     container_name: diun
+    env_file:
+      - path: ./.env
     volumes:
       - ./dockerData/diun/:/data
       - /var/run/docker.sock:/var/run/docker.sock
