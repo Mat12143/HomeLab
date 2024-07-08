@@ -24,3 +24,9 @@
         icon: restic
         href: http://{{HOMEPAGE_VAR_MACHINE_IP}}:{{HOMEPAGE_VAR_BACKREST_PORT}}
         container: backrest
+
+- Monitoring:
+    - Diun:
+        icon: diun 
+        href: {{HOMEPAGE_VAR_DIUN_DISCORD_CHANNEL}}
+        container: diun
