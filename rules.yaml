@@ -1,0 +1,12 @@
+http:
+  routers:
+    pihole:
+      rule: Host(`pihole.{{ env "HOMEPAGE_VAR_DOMAIN" }}`)
+      entryPoints: websecure
+      service: pihole
+
+  services:
+    pihole:
+      loadBalancer:
+        servers:
+          - url: 'http://{{ env "HOMEPAGE_VAR_DOMAIN" }}:8080'

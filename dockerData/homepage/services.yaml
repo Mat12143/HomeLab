@@ -4,12 +4,12 @@
 
 - Network Tools:
     - Pihole:
-        href: http://pihole.{{HOMEPAGE_VAR_MACHINE_IP}}/admin
+        href: http://pihole.{{HOMEPAGE_VAR_DOMAIN}}/admin
         icon: pi-hole
         container: pihole
         widget:
           type: pihole
-          url: https://pihole.{{HOMEPAGE_VAR_MACHINE_IP}}
+          url: https://pihole.{{HOMEPAGE_VAR_DOMAIN}}
           key: {{HOMEPAGE_VAR_PIHOLE_API}}
     - Tailscale:
         icon: tailscale
@@ -18,20 +18,18 @@
           type: tailscale
           deviceid: {{HOMEPAGE_VAR_TAILSCALE_DEVICEID}}
           key: {{HOMEPAGE_VAR_TAILSCALE_API}}
-    - Nginx Proxy Manager:
-        icon: nginx
-        href: https://proxy.{{HOMEPAGE_VAR_MACHINE_IP}}
-        container: nginxproxymanager
+    - Traefik Proxy:
+        icon: traefik
+        href: http://proxy.{{HOMEPAGE_VAR_DOMAIN}}
+        container: traefik
         widget:
-          type: npm
-          url: https://proxy.{{HOMEPAGE_VAR_MACHINE_IP}}
-          username: {{HOMEPAGE_VAR_NGINX_USER}}
-          password: "{{HOMEPAGE_VAR_NGINX_PW}}"
+          type: traefik
+          url: https://proxy.{{HOMEPAGE_VAR_DOMAIN}}
 
 - Backup:
     - BackRest:
         icon: restic
-        href: http://backrest.{{HOMEPAGE_VAR_MACHINE_IP}}
+        href: http://backrest.{{HOMEPAGE_VAR_DOMAIN}}
         container: backrest
 
 - Monitoring:
