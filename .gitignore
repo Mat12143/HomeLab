@@ -1,4 +1,3 @@
-dockerData/*
-dockerData/homepage/logs
-!dockerData/homepage/
+data/*
+config/homepage/logs/*
 .env

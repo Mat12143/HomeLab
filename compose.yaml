@@ -9,8 +9,8 @@ services:
       - 443:443
     command:
       - "--log.level=DEBUG"
-      - "--api.insecure=true"
       - "--providers.docker=true"
+      - "--api.dashboard=true"
       - "--providers.docker.exposedbydefault=false"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge=true"
       - "--certificatesresolvers.letsencrypt.acme.dnschallenge.provider=duckdns"
@@ -31,17 +31,16 @@ services:
       - "--providers.file.filename=/etc/traefik/rules.yaml"
       - "--providers.file.watch=true"
     volumes:
-      - ./dockerData/proxy/letsencrypt:/letsencrypt
+      - ./data/proxy/:/letsencrypt
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./rules.yaml:/etc/traefik/rules.yaml:ro
+      - ./config/traefik/rules.yaml:/etc/traefik/rules.yaml:ro
     labels:
       - 'traefik.enable=true'
       - 'traefik.http.routers.api.rule=Host(`proxy.${HOMEPAGE_VAR_DOMAIN}`)'
       - 'traefik.http.routers.api.entryPoints=websecure'
       - 'traefik.http.routers.api.service=api@internal'
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
+      - 'traefik.http.middlewares.auth.basicAuth.users=admin:${TRAEFIK_PW_HASH}'
+      - 'traefik.http.routers.api.middlewares=auth'
     environment:
       DUCKDNS_TOKEN: "${DUCKDNS_TOKEN}"
     env_file: ./.env
@@ -58,8 +57,8 @@ services:
       - WEB_PORT=8080
       - TZ=${TZ}
     volumes:
-      - ./dockerData/pihole/config:/etc/pihole
-      - ./dockerData/pihole/dnsmasq:/etc/dnsmasq.d
+      - ./data/pihole/config:/etc/pihole
+      - ./data/pihole/dnsmasq:/etc/dnsmasq.d
     cap_add:
       - NET_ADMIN
 
@@ -67,13 +66,10 @@ services:
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
-    dns:
-      - 1.1.1.1
-      - 8.8.8.8
     env_file:
       - path: ./.env
     volumes:
-      - ./dockerData/homepage/:/app/config
+      - ./config/homepage/:/app/config
       # Docker socket in order to view and display containers status
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
@@ -87,11 +83,11 @@ services:
     image: garethgeorge/backrest:latest
     container_name: backrest
     volumes:
-      - ./dockerData/backrest/data:/data
-      - ./dockerData/backrest/config:/config
+      - ./data/backrest/data:/data
+      - ./data/backrest/config:/config
       # TODO: Add cache path to ignore on backup
-      - ./dockerData/backrest/cache:/cache
-      - ./dockerData/backrest/restore:/restore
+      - ./data/backrest/cache:/cache
+      - ./data/backrest/restore:/restore
       # TODO: Add mount points for backup
     environment:
       - BACKREST_DATA=/data # path for backrest data. restic binary and the database are placed here.
@@ -109,10 +105,11 @@ services:
     command: serve
     hostname: homi
     container_name: diun
+    restart: unless-stopped
     env_file:
       - path: ./.env
     volumes:
-      - ./dockerData/diun/:/data
+      - ./data/diun/:/data
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - TZ=${TZ}
@@ -121,5 +118,6 @@ services:
       - DIUN_WATCH_JITTER=30s
       - DIUN_PROVIDERS_DOCKER=true
       - DIUN_PROVIDERS_DOCKER_WATCHBYDEFAULT=true
-      - DIUN_NOTIF_DISCORD_WEBHOOKURL=${DIUN_DISCORD_WEBHOOK}
-      - DIUN_NOTIF_DISCORD_TEMPLATEBODY=Docker tag {{ if .Entry.Image.HubLink }}[**{{ .Entry.Image }}**]({{ .Entry.Image.HubLink }}){{ else }}**{{ .Entry.Image }}**{{ end }} is available on {{ .Entry.Image.Domain }} ({{ .Meta.Hostname }})
+      - DIUN_NOTIF_TELEGRAM_TOKEN=${DIUN_TELEGRAM_TOKEN}
+      - DIUN_NOTIF_TELEGRAM_CHATIDS=${DIUN_TELEGRAM_CHAT}
+      - DIUN_NOTIF_TELEGRAM_TEMPLATEBODY=Docker tag {{ if .Entry.Image.HubLink }}[**{{ .Entry.Image }}**]({{ .Entry.Image.HubLink }}){{ else }}**{{ .Entry.Image }}**{{ end }} is available on {{ .Entry.Image.Domain }} ({{ .Meta.Hostname }})

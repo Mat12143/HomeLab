@@ -4,7 +4,7 @@
 
 - Network Tools:
     - Pihole:
-        href: http://pihole.{{HOMEPAGE_VAR_DOMAIN}}/admin
+        href: https://pihole.{{HOMEPAGE_VAR_DOMAIN}}/admin
         icon: pi-hole
         container: pihole
         widget:
@@ -22,9 +22,6 @@
         icon: traefik
         href: http://proxy.{{HOMEPAGE_VAR_DOMAIN}}
         container: traefik
-        widget:
-          type: traefik
-          url: https://proxy.{{HOMEPAGE_VAR_DOMAIN}}
 
 - Backup:
     - BackRest:
@@ -35,6 +32,5 @@
 - Monitoring:
     - Diun:
         icon: diun 
-        href: https://{{HOMEPAGE_VAR_DIUN_DISCORD_CHANNEL}}
         container: diun
 
