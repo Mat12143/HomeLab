@@ -1,0 +1,32 @@
+storage:
+  type: sqlite
+  path: /data/gatus.db
+
+endpoints:
+  - name: Tor Middle Relay on Oracle Cloud (Tinycip)
+    url: "tcp://89.168.17.69:9001"
+    group: external
+    interval: 5m
+    alerts:
+      - type: telegram
+    conditions:
+      - "[CONNECTED] == true"
+
+  - name: Tailscale Connection
+    group: internal
+    url: "icmp://100.76.211.49"
+    interval: 5m
+    conditions:
+      - "[CONNECTED] == true"
+    alerts:
+      - type: telegram
+
+alerting:
+  telegram:
+    token: ${DIUN_TELEGRAM_TOKEN}
+    id: ${DIUN_TELEGRAM_CHAT}
+    default-alert:
+      send-on-resolved: true
+      failure-threshold: 2
+      success-threshold: 2
+

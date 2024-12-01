@@ -3,14 +3,15 @@
 # https://gethomepage.dev/latest/configs/services
 
 - Network Tools:
-    - Pihole:
-        href: https://pihole.{{HOMEPAGE_VAR_DOMAIN}}/admin
-        icon: pi-hole
-        container: pihole
+    - ADGuard Home:
+        href: https://dns.{{HOMEPAGE_VAR_DOMAIN}}/admin
+        icon: adguard
+        container: adguardhome
         widget:
-          type: pihole
-          url: https://pihole.{{HOMEPAGE_VAR_DOMAIN}}
-          key: {{HOMEPAGE_VAR_PIHOLE_API}}
+          type: adguard
+          url: https://dns.{{HOMEPAGE_VAR_DOMAIN}}
+          username: {{HOMEPAGE_VAR_USER_ADGUARD}}
+          password: "{{HOMEPAGE_VAR_PW_ADGUARD}}"
     - Tailscale:
         icon: tailscale
         href: https://login.tailscale.com/admin/machines
@@ -22,6 +23,11 @@
         icon: traefik
         href: http://proxy.{{HOMEPAGE_VAR_DOMAIN}}
         container: traefik
+        widget:
+          type: traefik
+          url: https://proxy.{{HOMEPAGE_VAR_DOMAIN}}
+          username: admin
+          password: "{{HOMEPAGE_VAR_PW_ADGUARD}}"
 
 - Backup:
     - BackRest:
@@ -33,4 +39,11 @@
     - Diun:
         icon: diun 
         container: diun
+    - Gatus:
+        icon: gatus
+        container: gatus
+        href: https://ping.{{HOMEPAGE_VAR_DOMAIN}}
+        widget:
+          type: gatus
+          url: https://ping.{{HOMEPAGE_VAR_DOMAIN}}
 
