@@ -4,8 +4,8 @@
 
 - Network Tools:
     - ADGuard Home:
-        href: https://dns.{{HOMEPAGE_VAR_DOMAIN}}/admin
-        icon: adguard
+        href: https://dns.{{HOMEPAGE_VAR_DOMAIN}}
+        icon: adguard-home
         container: adguardhome
         widget:
           type: adguard
@@ -19,31 +19,28 @@
           type: tailscale
           deviceid: {{HOMEPAGE_VAR_TAILSCALE_DEVICEID}}
           key: {{HOMEPAGE_VAR_TAILSCALE_API}}
-    - Traefik Proxy:
-        icon: traefik
-        href: http://proxy.{{HOMEPAGE_VAR_DOMAIN}}
-        container: traefik
-        widget:
-          type: traefik
-          url: https://proxy.{{HOMEPAGE_VAR_DOMAIN}}
-          username: admin
-          password: "{{HOMEPAGE_VAR_PW_ADGUARD}}"
 
-- Backup:
-    - BackRest:
-        icon: restic
-        href: http://backrest.{{HOMEPAGE_VAR_DOMAIN}}
-        container: backrest
+- Tools:
+
+  - Silverbullet:
+      icon: silverbullet 
+      href: https://notes.{{HOMEPAGE_VAR_DOMAIN}}
+      container: silverbullet
 
 - Monitoring:
     - Diun:
         icon: diun 
         container: diun
-    - Gatus:
-        icon: gatus
-        container: gatus
-        href: https://ping.{{HOMEPAGE_VAR_DOMAIN}}
+
+    - Beszel:
+        icon: beszel
+        href: https://stats.{{HOMEPAGE_VAR_DOMAIN}}
+        container: beszel
         widget:
-          type: gatus
-          url: https://ping.{{HOMEPAGE_VAR_DOMAIN}}
+          type: beszel
+          url: https://stats.{{HOMEPAGE_VAR_DOMAIN}}
+          username: "{{HOMEPAGE_VAR_BESZEL_MAIL}}"
+          password: "{{HOMEPAGE_VAR_BESZEL_PW}}"
+          version: 2
+
 

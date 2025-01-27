@@ -7,6 +7,7 @@ theme: dark
 color: zinc
 
 headerStyle: boxed
+iconStyle: theme
 
 quicklaunch:
   searchDescriptions: true
@@ -17,15 +18,15 @@ quicklaunch:
 layout:
   Network Tools:
     icon: mdi-web
-    style: row
-    columns: 2
+
+  Entertainment:
+    icon: mdi-music
 
   Monitoring:
     icon: mdi-chart-line
-    style: row
-    columns: 2
 
   Backup:
     icon: mdi-cloud-upload
-    style: row
-    columns: 2
+
+  Tools:
+    icon: mdi-tools
