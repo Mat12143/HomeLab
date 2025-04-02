@@ -2,9 +2,17 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/latest/configs/settings
 
-title: Homy
+title: Homi
 theme: dark
-color: zinc
+color: slate
+
+hideErrors: true
+
+background:
+  image: https://images.unsplash.com/photo-1717954681469-98710c9c4b47?ixid=M3w4ODczOHwwfDF8cmFuZG9tfHx8fHx8fHx8MTc0MjI0MjgxOHw&ixlib=rb-4.0.3
+  blur: xl
+  opacity: 70
+
 
 headerStyle: boxed
 iconStyle: theme
@@ -18,15 +26,14 @@ quicklaunch:
 layout:
   Network Tools:
     icon: mdi-web
+    style: row
 
   Entertainment:
     icon: mdi-music
+    style: row
+    columns: 3
 
   Monitoring:
     icon: mdi-chart-line
-
-  Backup:
-    icon: mdi-cloud-upload
-
-  Tools:
-    icon: mdi-tools
+    style: row
+    columns: 2

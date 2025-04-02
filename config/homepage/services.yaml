@@ -3,33 +3,17 @@
 # https://gethomepage.dev/latest/configs/services
 
 - Network Tools:
-    - ADGuard Home:
-        href: https://dns.{{HOMEPAGE_VAR_DOMAIN}}
-        icon: adguard-home
-        container: adguardhome
+    - PiHole:
+        icon: pi-hole
+        href: https://dns.{{HOMEPAGE_VAR_DOMAIN}}/admin
         widget:
-          type: adguard
-          url: https://dns.{{HOMEPAGE_VAR_DOMAIN}}
-          username: {{HOMEPAGE_VAR_USER_ADGUARD}}
-          password: "{{HOMEPAGE_VAR_PW_ADGUARD}}"
-    - Tailscale:
-        icon: tailscale
-        href: https://login.tailscale.com/admin/machines
-        widget:
-          type: tailscale
-          deviceid: {{HOMEPAGE_VAR_TAILSCALE_DEVICEID}}
-          key: {{HOMEPAGE_VAR_TAILSCALE_API}}
-
-- Tools:
-
-  - Silverbullet:
-      icon: silverbullet 
-      href: https://notes.{{HOMEPAGE_VAR_DOMAIN}}
-      container: silverbullet
-
+            type: pihole
+            url: https://dns.{{HOMEPAGE_VAR_DOMAIN}}
+            key: "{{HOMEPAGE_VAR_PIHOLE}}"
+            version: 6
 - Monitoring:
     - Diun:
-        icon: diun 
+        icon: diun
         container: diun
 
     - Beszel:
@@ -44,3 +28,50 @@
           version: 2
 
 
+- Entertainment:
+    - Jellyfin:
+        icon: jellyfin
+        href: https://media.{{HOMEPAGE_VAR_DOMAIN}}
+        container: jellyfin
+        widget:
+          type: jellyfin
+          url: https://media.{{HOMEPAGE_VAR_DOMAIN}}
+          key: "{{HOMEPAGE_VAR_JELLYFIN}}"
+          enableUser: true # optional, defaults to false
+    - Sonarr:
+        icon: sonarr
+        href: https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}
+        container: sonarr
+        widget:
+          type: sonarr
+          url: https://sonarr.{{HOMEPAGE_VAR_DOMAIN}}
+          key: "{{HOMEPAGE_VAR_SONARR}}"
+
+    - Radarr:
+        icon: radarr
+        href: https://radarr.{{HOMEPAGE_VAR_DOMAIN}}
+        cointainer: radarr
+        widget:
+          type: radarr
+          url: https://radarr.{{HOMEPAGE_VAR_DOMAIN}}
+          key: "{{HOMEPAGE_VAR_RADARR}}"
+
+    - Prowlarr:
+        icon: prowlarr
+        href: https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}
+        cointainer: prowlarr
+        widget:
+          type: prowlarr
+          url: https://prowlarr.{{HOMEPAGE_VAR_DOMAIN}}
+          key: "{{HOMEPAGE_VAR_PROWLARR}}"
+
+    - QBittorrent:
+        icon: qbittorrent
+        href: https://torrent.{{HOMEPAGE_VAR_DOMAIN}}
+        container: qbittorrent
+        widget:
+          type: qbittorrent
+          url: https://torrent.{{HOMEPAGE_VAR_DOMAIN}}
+          username: admin
+          password: "{{HOMEPAGE_VAR_QBITTORENT}}"
+          enableLeechProgress: false # optional, defaults to false

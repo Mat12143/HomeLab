@@ -1,53 +1,77 @@
 services:
-  # Reverse proxy Caddy
-  caddy:
-    container_name: caddy
-    # Custom build with duckdns plugin
-    build: ./
+
+  traefik:
+    image: traefik:v2.2
+    container_name: traefik
+    command:
+      - --log.level=DEBUG
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      # HTTP settings
+      - --entrypoints.web.address=:80
+      # Automatic certificate renewal
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge=true
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.provider=duckdns
+      - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.disablePropagationCheck=true
+      - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
+      - --certificatesResolvers.letsencrypt.acme.email=web@${HOMEPAGE_VAR_DOMAIN}
+      # HTTPS settings
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls=true
+      - --entrypoints.websecure.http.tls.certResolver=letsencrypt
+      - --entrypoints.websecure.http.tls.domains[0].main=${HOMEPAGE_VAR_DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.${HOMEPAGE_VAR_DOMAIN}
+      # Redirect HTTP to HTTPS
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+    volumes:
+      - traefik_certs:/certs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     env_file:
       - path: ./.env
-    restart: unless-stopped
     ports:
       - 80:80
       - 443:443
-    volumes:
-      - ./config/Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./data/caddy/data:/data
-      - ./data/caddy/config:/config
-      - ./data/files:/files
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-  # AdGuardHome
-  adguardhome:
-    container_name: adguardhome
-    image: adguard/adguardhome
+  pihole:
+    image: pihole/pihole:latest
+    container_name: pihole
     restart: unless-stopped
-    # Network mode in order to use DHCP
-    network_mode: host
-    volumes:
-      - ./data/adguardhome/work:/opt/adguardhome/work
-      - ./data/adguardhome/conf:/opt/adguardhome/conf
+    network_mode: "host"
     cap_add:
       - NET_ADMIN
+    env_file:
+      - path: ./.env
+    environment:
+      - FTLCONF_webserver_port=8080
+    volumes:
+      - pihole_data:/etc/pihole
+      - pihole_dns_data:/etc/dnsmasq.d
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pihole.rule=Host(`dns.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.pihole.entryPoints=websecure
+      - traefik.http.services.pihole.loadbalancer.server.port=8080
 
-  # Homepage for the lab
   homepage:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage
     env_file:
       - path: ./.env
     volumes:
-      - ./config/homepage/:/app/config
-      # Docker socket in order to view and display containers status
+      - ./config/homepage:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage.rule=Host(`${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.homepage.entryPoints=websecure
 
-  # Silverbullet for taking notes
-  silverbullet:
-    image: zefhemel/silverbullet
-    restart: unless-stopped
-    container_name: silverbullet
-    volumes:
-      - ./data/silverbullet/:/space
 
   # Server Monitoring tool
   beszel:
@@ -55,11 +79,102 @@ services:
     container_name: beszel
     restart: unless-stopped
     volumes:
-      - ./data/beszel_data:/beszel_data
+      - beszel_data:/beszel_data
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.beszel.rule=Host(`stats.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.beszel.entryPoints=websecure
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    environment:
+      - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel
+    volumes:
+      - jellyfin_config:/config
+      - jellyfin_cache:/cache
+      - ~/Media:/media
+    devices:
+      - dev/dri:/dev/dri
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyfin.rule=Host(`media.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.jellyfin.entryPoints=websecure
+  
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    restart: unless-stopped
+    env_file:
+      - path: ./.env
+    environment:
+      - TZ={TZ}
+      - PGID=1000
+      - PUID=1000
+    volumes:
+      - sonarr_config:/config
+      - ~/Media/Shows:/tv:rw
+      - torrent_downloads:/downloads
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.sonarr.entryPoints=websecure
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - GUID=1000
+    env_file:
+      - path: ./.env
+    volumes:
+      - radarr_config:/config
+      - ~/Media/Films:/films:rw
+      - torrent_downloads:/downloads
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.radarr.rule=Host(`radarr.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.radarr.entryPoints=websecure
+
+  qbittorrent:
+    image: ghcr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    restart: unless-stopped
+    environment:
+      - PGID=1000
+      - WEBUI_PORT=8080
+      - PUID=1000
+      - DOCKER_MODS=ghcr.io/vuetorrent/vuetorrent-lsio-mod:latest
+    volumes:
+      - torrent_config:/config
+      - torrent_downloads:/downloads
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.torrent.rule=Host(`torrent.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.torrent.entryPoints=websecure
+      - traefik.http.services.torrent.loadbalancer.server.port=8080
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - AUTO_UPDATE=true
+    volumes:
+      - prowlarr_config:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.prowlarr.entryPoints=websecure
 
   # Alert for container updates
   diun:
-    image: crazymax/diun:latest
+    image: ghcr.io/crazy-max/diun
     command: serve
     hostname: homi
     container_name: diun
@@ -67,7 +182,7 @@ services:
     env_file:
       - path: ./.env
     volumes:
-      - ./data/diun/:/data
+      - diun_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - TZ=${TZ}
@@ -79,3 +194,18 @@ services:
       - DIUN_NOTIF_TELEGRAM_TOKEN=${DIUN_TELEGRAM_TOKEN}
       - DIUN_NOTIF_TELEGRAM_CHATIDS=${DIUN_TELEGRAM_CHAT}
       - DIUN_NOTIF_TELEGRAM_TEMPLATEBODY=Docker tag {{ if .Entry.Image.HubLink }}[**{{ .Entry.Image }}**]({{ .Entry.Image.HubLink }}){{ else }}**{{ .Entry.Image }}**{{ end }} is available on {{ .Entry.Image.Domain }} ({{ .Meta.Hostname }})
+
+volumes:
+  traefik_certs:
+  diun_data:
+  torrent_config:
+  torrent_downloads:
+  sonarr_config:
+  jellyfin_cache:
+  jellyfin_config:
+  beszel_data:
+  pihole_data:
+  pihole_dns_data:
+  radarr_config:
+  prowlarr_config:
+  jellyseerr_data:

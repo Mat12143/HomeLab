@@ -1,6 +1,3 @@
-data/*
 config/homepage/logs/*
-config/gatus/*
 .env
-config/Caddyfile
 .obsidian/*
