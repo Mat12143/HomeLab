@@ -20,8 +20,10 @@ For my present use case it is more than enough computing power for what I am cur
 I am currently running a few Docker Containers. All the configurations are in the [compose.yml](https://github.com/Mat12143/HomeLab/blob/main/compose.yaml)
 
 ### Containers
-- 🛜 **AdGuard Home**: for DNS Network wide AD-Blocking
-- 📃 **Silverbullet.md**: for taking my notes in markdown
+- 🛜 **PiHole**: for DNS Network wide AD-Blocking
+- 📈 **Beszel**: for the monitoring
+- 📷 **Jellyfin**: for a self-hosted Netflix alternative
+- 📥 **Sonarr, Radarr, Prowlarr & QBittorent**: for downloading no-copyright media
 - 🔔 **Diun**: for sending me a notification when a new container version releases
 - 🏠 **Homepage**: a simple HomeLab homepage
-- ↔️ **Caddy**: reverse proxy + SSL cert manager
+- ↔️ **Traefik**: reverse proxy + SSL cert manager
