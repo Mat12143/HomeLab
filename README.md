@@ -25,5 +25,5 @@ I am currently running a few Docker Containers. All the configurations are in th
 - 📷 **Jellyfin**: for a self-hosted Netflix alternative
 - 📥 **Sonarr, Radarr, Prowlarr & QBittorent**: for downloading no-copyright media
 - 🔔 **Diun**: for sending me a notification when a new container version releases
-- 🏠 **Homepage**: a simple HomeLab homepage
+- 🏠 **Glance**: a simple HomeLab homepage
 - ↔️ **Traefik**: reverse proxy + SSL cert manager

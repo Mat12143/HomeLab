@@ -1,7 +1,6 @@
 services:
-
   traefik:
-    image: traefik:v2.2
+    image: traefik:v3.4
     container_name: traefik
     command:
       - --log.level=DEBUG
@@ -15,16 +14,18 @@ services:
       - --certificatesresolvers.letsencrypt.acme.storage=/certs/acme.json
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.disablePropagationCheck=true
       - --certificatesresolvers.letsencrypt.acme.dnschallenge.resolvers=1.1.1.1:53,8.8.8.8:53
-      - --certificatesResolvers.letsencrypt.acme.email=web@${HOMEPAGE_VAR_DOMAIN}
+      - --certificatesResolvers.letsencrypt.acme.email=web@${DOMAIN}
       # HTTPS settings
       - --entrypoints.websecure.address=:443
       - --entrypoints.websecure.http.tls=true
       - --entrypoints.websecure.http.tls.certResolver=letsencrypt
-      - --entrypoints.websecure.http.tls.domains[0].main=${HOMEPAGE_VAR_DOMAIN}
-      - --entrypoints.websecure.http.tls.domains[0].sans=*.${HOMEPAGE_VAR_DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].main=${DOMAIN}
+      - --entrypoints.websecure.http.tls.domains[0].sans=*.${DOMAIN}
       # Redirect HTTP to HTTPS
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      # Disable certificate verification
+      - --serversTransport.insecureSkipVerify=true
     volumes:
       - traefik_certs:/certs
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -39,6 +40,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  # Network Services
   pihole:
     image: pihole/pihole:latest
     container_name: pihole
@@ -55,25 +57,10 @@ services:
       - pihole_dns_data:/etc/dnsmasq.d
     labels:
       - traefik.enable=true
-      - traefik.http.routers.pihole.rule=Host(`dns.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.pihole.rule=Host(`dns.${DOMAIN}`)
       - traefik.http.routers.pihole.entryPoints=websecure
       - traefik.http.services.pihole.loadbalancer.server.port=8080
 
-  homepage:
-    image: ghcr.io/gethomepage/homepage:latest
-    container_name: homepage
-    env_file:
-      - path: ./.env
-    volumes:
-      - ./config/homepage:/app/config
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.homepage.rule=Host(`${HOMEPAGE_VAR_DOMAIN}`)
-      - traefik.http.routers.homepage.entryPoints=websecure
-
-
-  # Server Monitoring tool
   beszel:
     image: henrygd/beszel
     container_name: beszel
@@ -82,9 +69,45 @@ services:
       - beszel_data:/beszel_data
     labels:
       - traefik.enable=true
-      - traefik.http.routers.beszel.rule=Host(`stats.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.beszel.rule=Host(`stats.${DOMAIN}`)
       - traefik.http.routers.beszel.entryPoints=websecure
 
+  syncthing:
+    image: lscr.io/linuxserver/syncthing:latest
+    container_name: syncthing
+    env_file:
+      - path: ./.env
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - syncthing_config:/config
+      - ~/Synced:/syncDest
+    ports:
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.syncthing.rule=Host(`sync.${DOMAIN}`)
+      - traefik.http.routers.syncthing.entryPoints=websecure
+
+  # Homepage
+  homepage:
+    container_name: glance
+    image: glanceapp/glance
+    restart: unless-stopped
+    env_file:
+      - path: ./.env
+    volumes:
+      - ./config/glance:/app/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage.rule=Host(`${DOMAIN}`)
+      - traefik.http.routers.homepage.entryPoints=websecure
+
+
+  # Entertainment
   jellyfin:
     image: lscr.io/linuxserver/jellyfin:latest
     container_name: jellyfin
@@ -99,7 +122,7 @@ services:
       - dev/dri:/dev/dri
     labels:
       - traefik.enable=true
-      - traefik.http.routers.jellyfin.rule=Host(`media.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.jellyfin.rule=Host(`media.${DOMAIN}`)
       - traefik.http.routers.jellyfin.entryPoints=websecure
   
   sonarr:
@@ -118,7 +141,7 @@ services:
       - torrent_downloads:/downloads
     labels:
       - traefik.enable=true
-      - traefik.http.routers.sonarr.rule=Host(`sonarr.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
       - traefik.http.routers.sonarr.entryPoints=websecure
 
   radarr:
@@ -136,7 +159,7 @@ services:
       - torrent_downloads:/downloads
     labels:
       - traefik.enable=true
-      - traefik.http.routers.radarr.rule=Host(`radarr.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.radarr.rule=Host(`radarr.${DOMAIN}`)
       - traefik.http.routers.radarr.entryPoints=websecure
 
   qbittorrent:
@@ -153,7 +176,7 @@ services:
       - torrent_downloads:/downloads
     labels:
       - traefik.enable=true
-      - traefik.http.routers.torrent.rule=Host(`torrent.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.torrent.rule=Host(`torrent.${DOMAIN}`)
       - traefik.http.routers.torrent.entryPoints=websecure
       - traefik.http.services.torrent.loadbalancer.server.port=8080
 
@@ -169,7 +192,7 @@ services:
       - prowlarr_config:/config
     labels:
       - traefik.enable=true
-      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${HOMEPAGE_VAR_DOMAIN}`)
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
       - traefik.http.routers.prowlarr.entryPoints=websecure
 
   # Alert for container updates
@@ -195,6 +218,19 @@ services:
       - DIUN_NOTIF_TELEGRAM_CHATIDS=${DIUN_TELEGRAM_CHAT}
       - DIUN_NOTIF_TELEGRAM_TEMPLATEBODY=Docker tag {{ if .Entry.Image.HubLink }}[**{{ .Entry.Image }}**]({{ .Entry.Image.HubLink }}){{ else }}**{{ .Entry.Image }}**{{ end }} is available on {{ .Entry.Image.Domain }} ({{ .Meta.Hostname }})
 
+  silverbullet:
+    image: ghcr.io/silverbulletmd/silverbullet
+    container_name: silverbullet
+    restart: unless-stopped
+    env_file:
+      - path: ./.env
+    volumes:
+      - ~/Notes:/space
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.silverbullet.rule=Host(`notes.${DOMAIN}`)
+      - traefik.http.routers.silverbullet.entryPoints=websecure
+
 volumes:
   traefik_certs:
   diun_data:
@@ -208,4 +244,4 @@ volumes:
   pihole_dns_data:
   radarr_config:
   prowlarr_config:
-  jellyseerr_data:
+  syncthing_config:

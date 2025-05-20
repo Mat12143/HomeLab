@@ -1,0 +1,192 @@
+theme:
+  primary-color: 48 71 99
+  background-color: 60 4 9
+  positive-color: 148 100 43
+  negative-color: 13 89 41
+
+pages:
+  - name: Home
+    width: slim
+    hide-desktop-navigation: true
+    center-vertically: true
+    columns:
+      - size: small
+        widgets:
+          - type: server-stats
+            servers:
+              - type: local
+                name: "Local"
+                hide-mountpoints-by-default: true
+                mountpoints:
+                  "/":
+                    hide: false
+
+          - type: dns-stats
+            service: pihole-v6
+            url: https://dns.${DOMAIN}
+            password: '${PIHOLE_PW}'
+            hour-format: 24h
+
+          - type: releases
+            show-source-icon: true
+            token: ${GITHUB_TOKEN}
+            repositories:
+              - dockerhub:pihole/pihole:latest
+              - dockerhub:henrygd/beszel:latest
+              - dockerhub:glanceapp/glance:latest
+              - crazy-max/diun
+              - silverbulletmd/silverbullet
+              - linuxserver/docker-jellyfin
+              - linuxserver/docker-sonarr
+              - linuxserver/docker-radarr
+              - linuxserver/docker-qbittorrent
+              - linuxserver/docker-prowlarr
+              - linuxserver/docker-syncthing
+
+      - size: full
+        widgets:
+          - type: monitor
+            title: Network
+            cache: 10m
+            sites:
+              - title: Pihole 
+                url: https://dns.${DOMAIN}/admin/login
+                icon: si:pi-hole
+                alt-status-codes:
+                  - 403
+
+              - title: Beszel
+                url: https://stats.${DOMAIN}
+                icon: si:codeforces
+
+              - title: Syncthing 
+                url: https://sync.${DOMAIN}
+                icon: si:syncthing
+
+          - type: monitor
+            title: Entertainment
+            cache: 10m
+            sites:
+              - title: Jellyfin
+                url: https://media.${DOMAIN}
+                icon: si:jellyfin
+
+              - title: Sonarr
+                url: https://sonarr.${DOMAIN}
+                icon: si:sonarr
+
+              - title: Radarr 
+                url: https://radarr.${DOMAIN}
+                icon: si:radarr
+
+              - title: Prowlarr
+                url: https://prowlarr.${DOMAIN}
+                icon: si:wheniwork
+
+              - title: QBittorrent
+                url: https://torrent.${DOMAIN}
+                icon: si:qbittorrent
+
+          - type: custom-api
+            title: Tailscale Devices
+            title-url: https://login.tailscale.com/admin/machines
+            url: https://api.tailscale.com/api/v2/tailnet/-/devices
+            headers:
+              Authorization: Bearer ${TAILSCALE_API_KEY}
+            cache: 10m
+            template: |
+                {{/* User Variables */}}
+                {{/* Set to true if you'd like an indicator for online devices */}}
+                {{ $enableOnlineIndicator := true }}
+
+                <style>
+                  .device-info-container {
+                    position: relative;
+                    overflow: hidden;
+                    height: 1.5em;
+                  }
+
+                  .device-info {
+                    display: flex;
+                    transition: transform 0.2s ease, opacity 0.2s ease;
+                  }
+
+                  .device-ip {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    transform: translateY(-100%);
+                    opacity: 0;
+                    transition: transform 0.2s ease, opacity 0.2s ease;
+                  }
+
+                  .offline-indicator {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background-color: var(--color-negative);
+                    display: inline-block;
+                    margin-left: 4px;
+                    vertical-align: middle;
+                  }
+
+                  .online-indicator {
+                    width: 8px;
+                    height: 8px;
+                    border-radius: 50%;
+                    background-color: var(--color-positive);
+                    display: inline-block;
+                    margin-left: 4px;
+                    vertical-align: middle;
+                  }
+
+                  .device-name-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                  }
+
+                  .indicators-container {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                  }
+
+                </style>
+                <ul class="list list-gap-10 collapsible-container" data-collapse-after="4">
+                  {{ range .JSON.Array "devices" }}
+                  <li>
+                    <div class="flex items-center gap-10">
+                      <div class="device-name-container grow">
+
+                        <a class="size-h4 block text-truncate primary-color" href="https://login.tailscale.com/admin/machines/{{ .String "addresses.0" }}">
+                            {{ findMatch "^([^.]+)" (.String "name") }}
+                        </a>
+
+                        <div class="indicators-container">
+                          {{ $lastSeen := .String "lastSeen" | parseTime "rfc3339" }}
+                          {{ if not ($lastSeen.After (offsetNow "-10s")) }}
+                            {{ $lastSeenTimezoned := $lastSeen.In now.Location }}
+                            <span class="offline-indicator" data-popover-type="text" data-popover-text="Offline - Last seen {{ $lastSeenTimezoned.Format " Jan 2 3:04pm" }}"></span>
+                          {{ else if $enableOnlineIndicator }}
+                            <span class="online-indicator" data-popover-type="text" data-popover-text="Online"></span>
+                          {{ end }}
+
+                        </div>
+                      </div>
+                    </div>
+                    <div class="device-info-container">
+                      <ul class="list-horizontal-text device-info">
+                        <li>{{ .String "os" }}</li>
+                        <li>{{ .String "addresses.0" }}</li>
+                      </ul>
+                    </div>
+                  </li>
+                  {{ end }}
+                </ul>
+
+          - type: bookmarks
+            groups:
+              - links:
+                  - title: Router
+                    url: https://192.168.1.1
